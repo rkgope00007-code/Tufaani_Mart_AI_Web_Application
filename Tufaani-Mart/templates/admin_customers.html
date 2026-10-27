@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block content %}<section class="container py-5"><h2>Customers</h2>{% for c in customers %}<div class="summary mb-2">{{ c.full_name }} · {{ c.email }} · {{ c.phone or 'No phone' }}</div>{% endfor %}</section>{% endblock %}

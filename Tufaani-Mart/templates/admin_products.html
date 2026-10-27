@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block content %}<section class="container py-5"><h2>All Products</h2>{% for p in products %}<div class="summary mb-2 d-flex justify-content-between"><span>{{ p.product_name }} · Seller #{{ p.seller_id }}</span><b>₹{{ '%.2f'|format(p.price) }}</b></div>{% endfor %}</section>{% endblock %}

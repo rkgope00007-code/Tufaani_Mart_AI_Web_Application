@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Seller Approvals — Tufaani Mart{% endblock %}
+{% block content %}
+<section class="page-shell">
+  <div class="container-wide">
+    <div class="page-title" style="text-align:left">
+      <div class="eyebrow">Marketplace control</div>
+      <h1>Seller Approvals</h1>
+      <p>Approve trusted stores or reject applications that should not enter the marketplace.</p>
+    </div>
+
+    <div class="panel">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Seller applications</h3>
+        <span class="status">{{ sellers|length }} sellers</span>
+      </div>
+
+      {% if sellers %}
+        {% for s in sellers %}
+        {% set state = s.approval_status or ('Approved' if s.is_approved else 'Pending') %}
+        <div class="seller-approval-row">
+          <div>
+            <strong>{{ s.store_name or 'Unnamed Store' }}</strong>
+            <div class="small muted">{{ s.full_name }} · {{ s.email }}</div>
+          </div>
+          <div class="seller-approval-actions">
+            {% if state == 'Pending' %}
+              <span class="status">Pending</span>
+              <form method="post" action="{{ url_for('approve_seller', user_id=s.id) }}">
+                <button class="btn-theme" type="submit"><i class="fa-solid fa-check"></i> Approve</button>
+              </form>
+              <form method="post" action="{{ url_for('reject_seller', user_id=s.id) }}" onsubmit="return confirm('Reject this seller application?');">
+                <button class="btn-reject" type="submit"><i class="fa-solid fa-xmark"></i> Reject</button>
+              </form>
+            {% elif state == 'Approved' %}
+              <span class="status status-approved">Approved</span>
+              <form method="post" action="{{ url_for('reject_seller', user_id=s.id) }}" onsubmit="return confirm('Reject this seller? Their store will no longer be visible to customers.');">
+                <button class="btn-reject btn-sm" type="submit">Reject</button>
+              </form>
+            {% else %}
+              <span class="status status-rejected">Rejected</span>
+              <form method="post" action="{{ url_for('approve_seller', user_id=s.id) }}">
+                <button class="btn-theme btn-sm" type="submit">Approve again</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">No seller applications yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

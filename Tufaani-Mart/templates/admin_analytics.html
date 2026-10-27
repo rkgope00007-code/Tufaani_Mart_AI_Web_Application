@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block content %}<section class="container py-5"><h2>Analytics</h2><div class="stat mb-4"><b>₹{{ '%.2f'|format(revenue) }}</b><span>Total order value</span></div><p>Total orders: {{ orders|length }}</p></section>{% endblock %}

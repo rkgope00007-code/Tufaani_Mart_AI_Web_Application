@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Stores — Tufaani Mart{% endblock %}
+{% block content %}
+<section class="page-shell"><div class="container-wide">
+{% if selected_store %}
+  <div class="mb-3"><a class="store-link" href="{{ url_for('stores') }}">← All stores</a></div>
+  <div class="store-hero"><div class="eyebrow">Local seller</div><h1>{{ selected_store.store_name or selected_store.full_name }}</h1><p>{{ selected_store.email }}{% if selected_store.phone %} • {{ selected_store.phone }}{% endif %}</p></div>
+  <div class="section-head text-start"><h2>Products from this store</h2><p>Fresh picks from {{ selected_store.store_name or selected_store.full_name }}</p></div>
+  <div class="product-grid">{% for p in store_products %}<article class="product-card"><div class="product-visual">{% if p.image %}<img src="{{ url_for('uploaded_product_image', filename=p.image) }}" alt="{{ p.product_name }}">{% else %}<div class="product-placeholder">🛍️</div>{% endif %}</div><div class="product-info"><div class="product-category">{{ p.category }}</div><div class="product-name">{{ p.product_name }}</div><div class="price">₹{{ '%.2f'|format(p.price) }}</div><div class="card-actions"><a class="btn-outline" href="{{ url_for('product_details', product_id=p.id) }}">View</a>{% if session.get('role')=='customer' %}<form class="flex-grow-1" method="post" action="{{ url_for('add_to_cart', product_id=p.id) }}"><button class="btn-rust w-100">Add to bag</button></form>{% endif %}</div></div></article>{% else %}<div class="panel">This store has no available products yet.</div>{% endfor %}</div>
+{% else %}
+  <div class="page-title"><div class="eyebrow">Meet the sellers</div><h1>Our Stores</h1><p>Shop from approved local sellers on Tufaani Mart.</p></div>
+  <div class="store-grid">{% for s in sellers %}<a class="store-card" href="{{ url_for('store_details', store_id=s.id) }}"><div class="store-cover">🏪</div><div class="store-info"><h3>{{ s.store_name or s.full_name }}</h3><p>{{ s.email }}</p><div class="store-link">Visit store →</div></div></a>{% else %}<div class="panel">No approved stores yet. Sellers appear here after admin approval.</div>{% endfor %}</div>
+{% endif %}
+</div></section>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-wrap"><div class="auth-card"><div class="text-center mb-4"><div class="logo-mark">⚡</div><h2>Welcome back</h2><p class="text-muted">Choose your account type to continue.</p></div>
+<form method="post">
+<div class="role-grid mb-3">{% for r,label,icon in [('customer','Customer','fa-user'),('seller','Seller','fa-store'),('admin','Admin','fa-shield-halved')] %}<label><input type="radio" name="role" value="{{ r }}" {% if r=='customer' %}checked{% endif %}><span><i class="fa-solid {{ icon }}"></i>{{ label }}</span></label>{% endfor %}</div>
+<label>Email</label><input class="form-control mb-3" type="email" name="email" required>
+<label>Password</label>
+<div class="password-wrap mb-4">
+<input class="form-control" type="password" name="password" id="loginPassword" required>
+<button type="button" class="password-toggle" onclick="togglePassword('loginPassword', this)" aria-label="Show password"><i class="fa-regular fa-eye"></i><span>Show</span></button>
+</div>
+<button class="btn btn-primary w-100 py-3">Login</button></form><p class="text-center mt-4">New here? <a href="{{ url_for('register') }}">Create an account</a></p></div></section>
+{% endblock %}

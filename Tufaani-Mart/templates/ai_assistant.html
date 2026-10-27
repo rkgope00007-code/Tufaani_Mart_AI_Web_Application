@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}AI Assistant — Tufaani Mart{% endblock %}
+{% block content %}
+<section class="page-shell">
+  <div class="container-wide">
+    <div class="ai-banner">
+      <div class="eyebrow" style="color:#d9a996">Tufaani intelligence</div>
+      <h1>AI Assistant</h1>
+      <p>Ask about products, stores, prices, stock, carts, orders and delivery.</p>
+    </div>
+
+    {% if session.get('role') == 'customer' %}
+    <div class="chat-layout">
+      <div class="chat-panel">
+        <div class="chat-head">
+          <div><strong>Tufaani AI</strong><span>Shopping assistant</span></div>
+          <a class="btn-outline" href="{{ url_for('ai_picks') }}">AI Picks</a>
+        </div>
+        <div id="chatMessages" class="chat-messages">
+          <div class="chat-message bot"><div class="bubble">Hi {{ session.get('name') }}! 👋 Ask me about a product, store, price, stock, order or delivery.</div></div>
+        </div>
+        <div class="chat-suggestions">
+          <button type="button" data-question="What should I buy?">What should I buy?</button>
+          <button type="button" data-question="What is the price of Amul Milk?">Product price</button>
+          <button type="button" data-question="Show me stores">Show stores</button>
+          <button type="button" data-question="Where is my latest order?">My order</button>
+        </div>
+        <form id="chatForm" class="chat-form">
+          <input id="chatInput" name="message" autocomplete="off" placeholder="Ask about a product or store..." required>
+          <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+      </div>
+
+      <div class="ai-side panel">
+        <div class="eyebrow">Try asking</div>
+        <h3>“Which products are available?”</h3>
+        <p class="muted">The assistant can search your current Tufaani Mart products and approved stores, then help with your recent order.</p>
+        <a class="btn-rust" href="{{ url_for('products') }}">Browse products</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="panel mt-3">
+      <h2>Shop a little smarter.</h2>
+      <p class="muted">Log in as a customer to use the interactive AI chat. You can ask about products, stores, prices, stock and orders.</p>
+      <a class="btn-rust" href="{{ url_for('login') }}">Customer login</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if session.get('role') == 'customer' %}
+<script>
+const form = document.getElementById('chatForm');
+const input = document.getElementById('chatInput');
+const messages = document.getElementById('chatMessages');
+
+function addMessage(text, type) {
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-message ' + type;
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = text;
+  wrap.appendChild(bubble);
+  messages.appendChild(wrap);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+async function sendQuestion(question) {
+  if (!question.trim()) return;
+  addMessage(question, 'user');
+  input.value = '';
+  input.disabled = true;
+  try {
+    const body = new URLSearchParams();
+    body.append('message', question);
+    const response = await fetch('{{ url_for("ai_chat") }}', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+      body
+    });
+    const data = await response.json();
+    addMessage(data.reply || 'Sorry, I could not answer that.', 'bot');
+  } catch (error) {
+    addMessage('I could not connect to the assistant. Please try again.', 'bot');
+  } finally {
+    input.disabled = false;
+    input.focus();
+  }
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  sendQuestion(input.value);
+});
+
+document.querySelectorAll('[data-question]').forEach(btn => {
+  btn.addEventListener('click', () => sendQuestion(btn.dataset.question));
+});
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block content %}<section class="container py-5"><div class="summary"><h2>Profile</h2><p><b>Name:</b> {{ user.full_name }}</p><p><b>Email:</b> {{ user.email }}</p><p><b>Account type:</b> {{ user.role|capitalize }}</p>{% if user.store_name %}<p><b>Store:</b> {{ user.store_name }}</p>{% endif %}</div></section>{% endblock %}
